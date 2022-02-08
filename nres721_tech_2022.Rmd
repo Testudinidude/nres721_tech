@@ -1,0 +1,46 @@
+---
+title: "Fundamentals of coding for genetics"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+author: "Nathan W. Byer"
+date: "8 February 2022"
+---
+
+Much of the work we have done up through now has relied on either Excel plugins or software packages with Graphical User Interfaces (GUIs for short). In reality, most researchers who work on genetics and genomics conduct most of their analyses from the commandline - in other words, by using computer coding! For the purposes of this course, we are going to introduce you to two commonly-used platforms for genetic analyses: the R programming language, and the BASH/UNIX language and computer shell. 
+
+# A recommendation - running R and Unix from Virtualbox
+
+Nowadays, most people own computers with one of two operating systems - MacOS and Windows. If you have a MacOS computer, you are ready to go with any UNIX shell-based analyses, as MacOS is what is called UNIX-compliant; while there are a number of different command-line shells available to MacOS users, it is safe to say that you should be able to just run UNIX commands with no problems. However, Windows computers are not UNIX-compliant, and instead rely on MS-DOS or Powershell by default. As a result, it is a bit harder to get up-and-running with BASH/UNIX-based analyses when using a Windows computer. Thus, I have made an additional resource available to you all - a VirtualBox desktop that acts as a ready-to-go genetics workspace. Getting this installed is fairly easy too!
+
+https://nevada.box.com/s/4noyv4bhw08bv27o95rdokdhx1ncs6iy
+
+It should be pretty easy to get running:
+
+1. Download the .ova file at the link; it is quite large, so perhaps put it in a safe directory for long-term use.
+
+2. Navigate to the Oracle Virtual Box install link (https://www.virtualbox.org/wiki/Downloads), download the appropriate installer, and install.
+
+3. Once Oracle VM Virtualbox is installed, just click File --> Import Appliance and navigate to the .ova downloaded before. It may take up to 10 minutes to get the virtual box loaded.
+
+
+Hopefully, you should have a computer window with your virtualbox workspace open now. 
+
+# Introduction to BASH/UNIX-like shells
+
+Click on the grid of nine squares at the bottom left of this new desktop. That should open up a list of available programs. In the search bar at the top, type in "Terminal", then click the application that pops up from this search.
+
+You are now
+
+```{bash}
+cd ~
+pwd
+
+```
