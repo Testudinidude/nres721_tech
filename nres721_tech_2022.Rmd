@@ -1,5 +1,5 @@
 ---
-title: "Fundamentals of coding for genetics"
+title: "Basics of UNIX and R programming for Molecular Ecology"
 output: 
   html_document:
     toc: true
@@ -14,7 +14,7 @@ author: "Nathan W. Byer"
 date: "8 February 2022"
 ---
 
-Much of the work we have done up through now has relied on either Excel plugins or software packages with Graphical User Interfaces (GUIs for short). In reality, most researchers who work on genetics and genomics conduct most of their analyses from the commandline - in other words, by using computer coding! For the purposes of this course, we are going to introduce you to two commonly-used platforms for genetic analyses: the R programming language, and the BASH/UNIX language and computer shell. 
+Much of the work we have done up through now has relied on either Excel plugins or software packages with Graphical User Interfaces (GUIs for short). In reality, most researchers who work on genetics and genomics conduct most of their analyses from the commandline - in other words, by using computer coding! For the purposes of this course, we are going to introduce you to two commonly-used platforms for genetic analyses: the BASH/UNIX language and computer shell and the R programming language.
 
 # A recommendation - running R and Unix from Virtualbox
 
@@ -26,21 +26,388 @@ It should be pretty easy to get running:
 
 1. Download the .ova file at the link; it is quite large, so perhaps put it in a safe directory for long-term use.
 
-2. Navigate to the Oracle Virtual Box install link (https://www.virtualbox.org/wiki/Downloads), download the appropriate installer, and install.
+2. Download the  appropriate installer for VirtualBoxVM, follow the on-screen prompts, and install.
+
+Windows installer: https://download.virtualbox.org/virtualbox/6.1.32/VirtualBox-6.1.32-149290-Win.exe
+
+Mac OS X installer: https://download.virtualbox.org/virtualbox/6.1.32/VirtualBox-6.1.32-149290-OSX.dmg
 
 3. Once Oracle VM Virtualbox is installed, just click File --> Import Appliance and navigate to the .ova downloaded before. It may take up to 10 minutes to get the virtual box loaded.
 
 
 Hopefully, you should have a computer window with your virtualbox workspace open now. 
 
+<div  class="alert alert-success" >
+  The log-in information for this new desktop is:
+  
+  
+  *username*: molecularecology
+  *password*: password
+  
+  If there are any issues accessing the virtual box, please let us know!
+</div>
+
+
 # Introduction to BASH/UNIX-like shells
 
 Click on the grid of nine squares at the bottom left of this new desktop. That should open up a list of available programs. In the search bar at the top, type in "Terminal", then click the application that pops up from this search.
 
-You are now
+You are now ready to start learning how to code! 
+
+## File structure
+
+You are likely used to navigating between different folders and applications from your desktop - probably double-clicking on different folders and documents to open them. You can navigate quite easily between different files and folders quite easily using the commandline, but it is worth familiarizing ourselves with the necessary commands to do so.
+
+The first command to know is "cd" - which stands for "change directory". You can use this command to navigate between different folders and documents. When you point this command to a particular directory, that location in your computer is now your "working directory" - basically, 
+
+The second command to know is "pwd" - which stands for "print working directory". 
+Let's try these two commands out.
 
 ```{bash}
 cd ~
 pwd
+```
+
+You may be wondering what the "~" refers to - this points to your home directory. By entering "pwd" after this, we can see the location of our home directory
+
+Now, let's introduce another command - "ls" prints all directories and files housed in the current working directory. Let's try it out! 
+
+```{bash}
+cd ~
+pwd
+ls 
 
 ```
+
+So far, we have a) changed our working directory to home, b) printed the location of this home directory, and c) listed all directories and documents in the home directory. We are now going to learn a few other useful shortcuts for navigating through file structures. 
+
+
+The "~" command that we used before is what we call a "shortcut" - basically, a quick way to point your terminal towards the home directory! There are other shortcuts that are just as useful. The "." shortcut represents the current working directory, whereas the ".." shortcut allows you to the next highest level in your file structure. Let's try these both out:
+
+```{bash, }
+cd ~
+cd ./Documents/
+cd ../
+pwd
+
+```
+
+You can see that we first set our working directory to the "Documents" folder in our previous working directory, then returned to our previous working directory. 
+
+If we want to make a new directory, we can use the command "mkdir" - which stands for "make directory". Let's navigate back to our Documents folder and create a directory called "test":
+
+```{bash, }
+cd ~
+cd ./Documents/
+mkdir test
+ls
+```
+
+So far, we have learned a lot about navigating between directories; now let's take some steps to create our first file! We will do so using two new tools: "echo", which prints whatever you say right after it to the terminal, and ">" - known as a redirection operator. Combining these two tools will allow us to pass anything we want to a text file! Let's try it out in that new "test" directory:
+
+```{bash}
+cd ~/Documents/test/
+echo "hello world" > newdoc.txt
+```
+
+
+We can move this document around, too! Let's try using the command "cp" - which stands for copy - to copy this document to the next highest directory level.
+
+```{bash}
+cd ~/Documents/test/
+cp newdoc.txt ../
+cd ../
+ls
+cd ./test/
+ls
+```
+
+We now have two copies of the newdoc.txt file - one in ~/Documents/test and the other in ~/Documents. 
+
+If we want to add new information to this new document, we can use the ">>" operator - which appends information to an existing document. We will then print the first few lines of this new text file using the command "head".
+
+
+```{bash}
+cd ~/Documents/
+echo "this file is in ~/Documents/" >> newdoc.txt
+head newdoc.txt
+```
+
+Cool - we added to this file!
+
+First, just a reminder of what our file in ~/Documents looks like:
+```{bash}
+cd ~/Documents/
+head newdoc.txt
+```
+
+```{bash}
+cd ~/Documents/test/
+head newdoc.txt
+```
+
+So we can see that we have two files that a) have the same name, b) are located in different directories, and c) have slightly different contents. Keep this in mind as we go forward!
+
+
+We don't really want to keep that random junk file in our Documents folder, around so let's take this opportunity to see what will happen if we try to move the newdoc.txt file back to our test folder. This time, we will use the "mv" command - which means move - to permanently move a file from one location to another. 
+
+<div  class="alert alert-info" >
+  Discussion question: What do you think will happen when you move this file?
+</div>
+
+```{bash}
+cd ~/Documents/
+mv newdoc.txt ./test/
+cd ~/Documents/test/
+head newdoc.txt
+```
+
+Notice anything strange about the file now in our ~/Documents/test/ location? It has the extra line of text we added to the copy! This is important to keep in mind when moving files around - the "mv" command will overwrite any files in the destination folder that match the name of the file being moved. 
+
+A final command to learn is "rm" - which stands for remove. This can be used to remove directories and files. Keep in mind that this is irreversible - so be careful when using this command!
+
+Let's try removing the newdoc.txt file, since we no longer need it.
+
+```{bash}
+cd ~/Documents/test/
+rm newdoc.txt
+ls
+```
+
+Great! As a final note - if you try to use "rm" to remove a directory, you will run into errors - this prevents you from deleting a whole bunch of files in a directory accidentally. If we are sure we want to delete a directory, we have to use "rm -r" - which recursively removes all files in a directory, including the directory itself.
+
+```{bash}
+cd ~/Documents/
+rm -r ./test/
+ls
+```
+
+<div  class="alert alert-success" >
+  Well done! You now know the basics of navigating file structures in UNIX shell!
+</div>
+
+## conda environments
+
+Alright! So far so good. As you might imagine, there are a huge number of different software packages available to use for our purposes. We will be using a package of useful software tools called "miniconda" - which includes all sorts of useful utilities (including an entirely different programming language called Python - we won't be using python in this course, but keep this in mind!). 
+
+<div  class="alert alert-danger" >
+  If you are using the UbuntuWorkspace virtualbox, I already installed miniconda; thus, you can ignore the instructions for installing miniconda below. If you are not using the virtualbox, the below instructions will help you install miniconda!
+</div>
+
+First, click on the following link and download the appropriate installer for your operating system:
+https://docs.conda.io/en/latest/miniconda.html
+
+Place the installer in your home directory, if possible. You should then be able to install Miniconda using the following (replace the file after the bash command with whatever the name ofyour installer is): 
+
+```{bash, eval = FALSE}
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+
+Follow any prompts that show up for installation. If all else fails,  you can refer to this link for detailed linux installation instructions (https://conda.io/projects/conda/en/latest/user-guide/install/linux.html) and this link for macOS installation instructions (https://conda.io/projects/conda/en/latest/user-guide/install/macos.html).
+
+
+If the installation was successful, you should be able to run the following commands without errors:
+
+```{bash, eval = FALSE}
+conda list
+```
+
+<div  class="alert alert-danger" >
+  We will proceed under the assumption that miniconda successfully installed!
+</div>
+
+
+Assuming the above worked, we will proceed with installing a program called qiime2 - which you will use down-the-line for the microbiome tutorials. For now, this is a useful way of ensuring that everyone is a) familiar with installing packages, and b) in good shape for any downstream computational needs later in the course.
+
+Run the code block below for macOS installations:
+
+```{bash, eval = FALSE}
+conda update conda
+conda install wget
+wget https://data.qiime2.org/distro/core/qiime2-2021.11-py38-osx-conda.yml
+conda env create -n qiime2-2021.11 --file qiime2-2021.11-py38-osx-conda.yml
+# OPTIONAL CLEANUP
+rm qiime2-2021.11-py38-osx-conda.yml
+```
+
+These commands created a new **conda environment** called "qiime2-2021.11". Conda environments are really useful for running packages that have lots of dependencies; for more details on conda environments, click here: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
+
+# Installing and using R
+
+## installation 
+In the coming weeks, we will also be using R for genetic analyses. R is a highly flexible alternative computer language that can be used for a wide variety of data analysis needs.
+
+<div  class="alert alert-danger" >
+  As before - if you are using the UbuntuWorkspace virtualbox, I already installed R and RStudio; if not, follow the instructions below to install these two programs!
+</div>
+
+First, install R if you have not done so yet by navigating to the following page and following the appropriate links for your operating system: https://cran.r-project.org/.
+
+We also recommend installing RStudio, a very convenient program for visualizing and manipulating R code. You can find installation instructions here: https://www.rstudio.com/products/rstudio/download/.
+
+<div  class="alert alert-danger" >
+  We will proceed under the assumption that R and RStudio are installed!
+</div>
+
+## running R
+
+You should now have R and RStudio installed. An icon for RStudio should be present on your desktop; go ahead and double-click on this icon to launch RStudio. You should see something that looks like this:
+
+![](https://bookdown.org/gary_a_napier/induction_-_introduction_to_r/_book/images/Image2_Retry.png)
+
+we are going to run through some basic R commands.
+
+## installing packages
+
+If we want to install packages, we can do so using the install.packages() function. 
+```{r, eval = F}
+install.packages("vegan")
+```
+
+In order to use a particular package, we have to load that package into our current workspace using either library() or require(). The only difference between the two functions? library() returns an error if the package selected is not installed, whereas require() just returns a non-fatal warning if the package selected is not installed.
+
+```{r, eval = F}
+library(vegan)
+```
+
+## basic mathematics
+
+R makes it very easy to perform basic numeric calculations; you can use it like a very fancy calculator if you would like!
+
+```{r}
+100+100
+```
+```{r}
+100-50
+```
+```{r}
+100*100
+```
+```{r}
+100/100
+```
+
+## object assignment
+
+Let's say you have a value that you want to reuse many times, but don't want to type it out every time. You can assign that value to an object in R as follows:
+
+```{r}
+a<-100
+a
+```
+From now on, the chosen value is assigned to a; accordingly, we can use a as a stand-in for this number in mathematical operations:
+```{r}
+a + 100
+```
+```{r}
+a/100
+```
+```{r}
+a * 100
+```
+
+Now here is the neat thing - you can assign multiple values to variables as well! Let's assign a random selection of 10 numbers drawn from a normal distribution (centered on 10) to an object called "b":
+
+```{r}
+b<-rnorm(n = 10, mean = 10, sd = 1)
+b
+```
+
+This new object is what we call a **vector** - basically, a sequence of elements (in this case, numbers!)
+
+We can then calculate all sorts of useful summary statistics on this dataset:
+
+```{r}
+mean(b)
+```
+```{r}
+median(b)
+```
+```{r}
+summary(b)
+```
+
+As you can see, summary() is a pretty useful function for quickly generating summary statistics for a set of numbers!
+
+## classes and type of objects
+
+The utility of R is not just limited to manipulating numbers, however! R supports lots of different object classes.
+
+To see what I mean by this, let's first check on the class of those objects we created before - a and b.
+
+```{r}
+class(a)
+```
+```{r}
+class(b)
+```
+
+Both of these objects have class "numeric" - meaning they each contain numbers. 
+
+We can also create objects with class "character", as follows:
+
+```{r}
+c<-"Wow Neat!"
+c
+class(c)
+```
+
+What happens when we mix numbers and characters in a vector? Let's find out! We will create a custom vector using the c() command - which stands for concatenate. The c() command essentially creates a vector from the elements enclosed by the function.
+
+```{r}
+d<-c(1,2,"three", 4)
+class(d)
+```
+
+As you can see, R has some internal utilities for deciding what to do when you have mixed element classes within a particular object. In this case, it doesn't matter if most of the elements were numbers - including a character in the vector overrode the object class so that it became "character".
+
+## plotting in R
+
+R also has a number of exceptionally flexible utilities for plotting, which we illustrate briefly below.
+
+```{r}
+plot(b)
+```
+
+You might be wondering what the x-axis called "index" means - didn't we just have a list of numbers in b? In order to plot this vector, R basically ordered the values from first to last, and used this position in the vector as the x-axis!
+
+As you can imagine, we can also plot relationships between different vectors of numbers too; in order to do so, we first have to create a **data frame**.
+
+```{r}
+e<-c(1,2,3,4,5)
+f<-c(2,4,6,8,10)
+g<-data.frame(e,f)
+g
+plot(g)
+```
+
+As you can see, R defaulted to plotting the first column as the x-axis and the second as the y-axis.
+
+# Wrap-up - additional resources to explore!
+
+This is as far as we will go for now with basic UNIX and R utilities - for more details, I have compiled some resources below!
+
+## Unix resources
+
+An excellent resource for UNIX shell from evomics.org: https://evomics.org/learning/unix-tutorial/
+
+Andrew Severin also created a great tutorial for UNIX-based bioinformatics, available here:
+https://bioinformaticsworkbook.org/Appendix/Unix/unix-basics-1.html#gsc.tab=0
+
+## R resources
+
+I strongly recommend checking out the following excellent walkthrough of R basics: https://homerhanumat.github.io/r-notes/index.html. Homer goes into much more detail on the basics of R than I can here!
+
+Emmanuel Paradis also made an excellent resource for learning R, available here: https://cran.r-project.org/doc/contrib/Paradis-rdebuts_en.pdf
+
+
+There are a number of excellent resources for learning R, with links provided below:
+
+https://www.statmethods.net/r-tutorial/index.html
+
+Cheatsheets:
+
+https://www.rstudio.com/resources/cheatsheets/
+
+https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf
+
